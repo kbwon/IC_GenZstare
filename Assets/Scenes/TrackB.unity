@@ -14002,6 +14002,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ch27_nonPBR@Sitting Idle
       objectReference: {fileID: 0}
+    - target: {fileID: 2031988611176234707, guid: 2b7bcaed77e77cd45a169948e5f48142, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.06295901
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031988611176234707, guid: 2b7bcaed77e77cd45a169948e5f48142, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.19074829
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 2b7bcaed77e77cd45a169948e5f48142, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: c86a9f7a6fa93654a930eb14336e38d8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
