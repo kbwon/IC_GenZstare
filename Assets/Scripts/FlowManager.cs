@@ -6,20 +6,23 @@ public class FlowManager : MonoBehaviour
 {
     public static FlowManager Instance { get; private set; }
 
-    public string currentUserId;
-    public bool isGuest;
-    public TrackType currentTrack;
-    public bool tutorialDone;
+    [Header("User Info")]
+    public string currentUserId = "";
+    public bool isGuest = false;
+    public TrackType currentTrack = TrackType.A;
+    public bool tutorialDone = false;
 
-    //public SessionReport currentSessionReport;
+    [Header("Session")]
+    public SessionReport currentSessionReport;
 
-    void Awake()
+    private void Awake()
     {
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }

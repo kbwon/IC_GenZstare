@@ -41,6 +41,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TrackB.unity
     guid: 9700c5aa45eb6384294a31401f5d70d9
+  - enabled: 1
+    path: Assets/Scenes/Room_Login.unity
+    guid: 35a8098ca2415d8459b6d1409155f3d3
+  - enabled: 1
+    path: Assets/Scenes/Room_Tutorial.unity
+    guid: 12367246599f95246b697f0db4b2f73d
+  - enabled: 1
+    path: Assets/Scenes/Room_Check.unity
+    guid: fd0f315f2abbbdf478ad49fda8bfef23
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260, type: 2}
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: dc5a169419fa04987b057f65238cf3ba, type: 2}

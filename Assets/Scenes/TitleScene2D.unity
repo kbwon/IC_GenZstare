@@ -557,7 +557,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c7d1ca55e485ca4ead03f21b26eedc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TitleUIController
-  loginSceneName: StartEndScene
+  loginSceneName: Room_Login
   flowManagerPrefab: {fileID: 0}
 --- !u!1 &353986860
 GameObject:
@@ -1433,6 +1433,7 @@ MonoBehaviour:
   isGuest: 0
   currentTrack: 0
   tutorialDone: 0
+  currentSessionReport: {fileID: 0}
 --- !u!1 &1486910271
 GameObject:
   m_ObjectHideFlags: 0

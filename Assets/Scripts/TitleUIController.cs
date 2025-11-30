@@ -5,7 +5,7 @@ public class TitleUIController : MonoBehaviour
 {
     [Header("Next Scene Settings")]
     [SerializeField]
-    private string loginSceneName = "StartEndScene";
+    private string loginSceneName = "Room_Login";
 
     [Header("AppFlowManager (Optional)")]
     [Tooltip("처음 실행 시 AppFlowManager 프리팹을 한 번만 생성하고 싶다면 여기에 넣어주세요.")]
