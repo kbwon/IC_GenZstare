@@ -3,11 +3,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
-public class TrackAController : MonoBehaviour
+
+public class TrackBController : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private TMP_Text npcLineText;
     [SerializeField] private TMP_Text feedbackText;
+    //[SerializeField] private TMP_Text tipsText;
     [SerializeField] private Button[] optionButtons;
     [SerializeField] private TMP_Text[] optionTexts;
 
@@ -16,15 +18,11 @@ public class TrackAController : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioSource npcAudioSource;
-    [Tooltip("각 스텝별 NPC 대사 음성 (0: 인사, 1: 주문, 2: 포장/매장 질문, 3: 음료 나왔습니다)")]
+    [Tooltip("각 스텝별 NPC 대사 음성 (0: 점심 어땠어요, 1: 평소 점심, 2: 오후 일정, 3: 마무리)")]
     [SerializeField] private AudioClip[] npcLineClips;
 
     private SessionReport report;
-    private int step = 0;
-
-    private int cases = 0;
-    private string step1Answer;
-    private string step2Answer;
+    private int step = 0;   // 0~3
 
     private void Start()
     {
@@ -32,16 +30,16 @@ public class TrackAController : MonoBehaviour
         report = new SessionReport
         {
             userId = flow != null ? flow.currentUserId : "Guest",
-            track = "A"
+            track = "B"
         };
         if (flow != null)
             flow.currentSessionReport = report;
 
         feedbackText.text = "";
+        //tipsText.text = "표정, 시선, 응답 속도를 의식해 보세요.";
         ShowStep0();
     }
 
-    // 버튼 OnClick에 index 0,1,2 연결
     public void OnClickOption(int index)
     {
         switch (step)
@@ -61,18 +59,19 @@ public class TrackAController : MonoBehaviour
         }
     }
 
-    // --- STEP 0: 점원 인사 ---
+    // --- STEP 0: 점심 어땠어요? ---
 
     private void ShowStep0()
     {
         step = 0;
-        npcLineText.text = "카페 알바: 어서오세요~ \n 목표: 아이스 아메리카노 1잔, 따뜻한 라떼 한잔 포장하기";
+        npcLineText.text = "박주임: 점심 어땠어요? 오늘 구내식당 신메뉴 먹어봤어요?";
 
-        SetOption(0, "안녕하세요!", true);
-        SetOption(1, "...", true);
-        SetOption(2, "아, 네.", true);
+        SetOption(0, "네, 꽤 괜찮았어요. 소스가 생각보다 달달하더라고요. 대리님은 어땠어요?", true);
+        SetOption(1, "먹어봤는데… 저는 그냥 그렇다라구요.", true);
+        SetOption(2, "… 아 넵. 먹어봤어요.", true);
 
-        feedbackText.text = "먼저 간단히 인사해 보세요.";
+        feedbackText.text = "공감과 되묻기를 섞어서 대답해 볼까요?";
+        //tipsText.text = "미소 + 상대에게 되묻기 한 번 정도면 충분합니다.";
 
         StartCoroutine(PlayNpcLineAudioDelayed(3.0f, 0));
     }
@@ -82,32 +81,35 @@ public class TrackAController : MonoBehaviour
         if (index == 0)
         {
             report.goodChoices++;
-            feedbackText.text = "먼저 인사로 시작하면 분위기가 부드러워집니다.";
+            feedbackText.text = "공감과 되묻기로 대화를 자연스럽게 이어갔어요.";
         }
         else if (index == 1)
         {
-            report.badChoices++;
-            feedbackText.text = "인사를 하지 않으면 조금 어색하게 느껴질 수 있어요.";
+            report.neutralChoices++;
+            feedbackText.text = "사실만 말하면 조금 건조하게 느껴질 수 있어요.";
         }
         else
         {
-            report.neutralChoices++;
-            feedbackText.text = "말은 했지만, 조금 애매하게 느껴질 수 있어요.";
+            report.badChoices++;
+            feedbackText.text = "짧은 대답과 긴 침묵은 서로를 어색하게 만들 수 있어요.";
         }
 
         ShowStep1();
     }
 
-    // --- STEP 1: 주문 내용 ---
+    // --- STEP 1: 평소 점심은? ---
 
     private void ShowStep1()
     {
         step = 1;
-        npcLineText.text = "안녕하세요! 주문 어떻게 도와드릴까요?";
+        npcLineText.text = "박주임: 보통 점심은 뭐 자주 드세요? 구내식당 자주 가세요?";
 
-        SetOption(0, "아이스 아메리카노 한 잔, 따뜻한 라떼 한 잔 포장해주세요.", true);
-        SetOption(1, "따뜻한 아메리카노 한 잔, 아이스 라떼 한 잔 포장해주세요.", true);
-        SetOption(2, "그.. 아.. 그냥 커피요.", true);
+        SetOption(0, "평일엔 가볍게 먹는 편이에요. 가끔 회사 앞 덮밥집 가는데, 다음엔 같이 식사하실래요?", true);
+        SetOption(1, "그냥 가까운 데서 먹어요.", true);
+        SetOption(2, "네, 구내식당 가요.", true);
+
+        feedbackText.text = "조금 더 이야기를 넓혀볼 수도 있어요.";
+        //tipsText.text = "초대를 곁들이면 관계가 조금 더 가까워질 수 있습니다.";
 
         PlayNpcLineAudio(1);
     }
@@ -117,41 +119,35 @@ public class TrackAController : MonoBehaviour
         if (index == 0)
         {
             report.goodChoices++;
-            feedbackText.text = "구체적으로 말해서 주문이 정확하게 전달됩니다.";
-
-            step1Answer = "아이스 아메리카노, 따뜻한 라떼 ";
-            cases = 0; // 베이스 케이스
+            feedbackText.text = "초대를 곁들여서 분위기가 더 따뜻해졌어요.";
         }
         else if (index == 1)
         {
             report.neutralChoices++;
-            feedbackText.text = "의도와 조금 다른 조합으로 전달될 수 있어요.";
-
-            step1Answer = "따뜻한 아메리카노, 아이스 라떼 ";
-            cases = 1;
+            feedbackText.text = "정보는 전달되지만, 대화가 쉽게 끊길 수 있어요.";
         }
-        else // index == 2
+        else
         {
             report.badChoices++;
-            feedbackText.text = "정보가 부족해서 상대가 다시 물어봐야 할 수 있어요.";
-
-            step1Answer = "아메리카노 ";
-            cases = 2;
+            feedbackText.text = "너무 짧게 말하면 상대가 더 물어보기가 어렵습니다.";
         }
 
         ShowStep2();
     }
 
-    // --- STEP 2: 포장 or 매장 ---
+    // --- STEP 2: 오후 일정 ---
 
     private void ShowStep2()
     {
         step = 2;
-        npcLineText.text = "카페 알바: 포장해 드릴까요, 매장에서 드실까요?";
+        npcLineText.text = "박주임: 그나저나 요즘 마감 때문에 일 바쁘죠? 오후 일정은 괜찮으세요?";
 
-        SetOption(0, "포장해서 갈게요.", true);
-        SetOption(1, "매장에서 먹고 갈게요.", true);
-        SetOption(2, "", false); // 필요 없으면 숨기기
+        SetOption(0, "네, 조금 바쁘지만 괜찮아요. 대리님은요? 오후에 회의 많으세요?", true);
+        SetOption(1, "그냥 보통인 것 같아요.", true);
+        SetOption(2, "… 어… 잘 모르겠습니다.", true);
+
+        feedbackText.text = "상대의 일정도 함께 물어볼 수 있어요.";
+        //tipsText.text = "상대에게도 되묻는 한 문장이 관계에 큰 차이를 만듭니다.";
 
         PlayNpcLineAudio(2);
     }
@@ -161,66 +157,37 @@ public class TrackAController : MonoBehaviour
         if (index == 0)
         {
             report.goodChoices++;
-            feedbackText.text = "포장을 선택했습니다. 다음 대사로 넘어갑니다.";
-
-            step2Answer = "포장 ";
-            // cases += 0;    // 포장은 그대로
+            feedbackText.text = "상대의 일정도 물어보며 관심을 표현했어요.";
         }
-        else // index == 1
+        else if (index == 1)
         {
             report.neutralChoices++;
-            feedbackText.text = "매장에서 먹고 가는 선택도 괜찮습니다.";
-
-            step2Answer = "매장 ";
-            cases += 3; // 매장은 +3
+            feedbackText.text = "문제는 없지만, 조금 덜 따뜻하게 느껴질 수 있어요.";
+        }
+        else
+        {
+            report.badChoices++;
+            feedbackText.text = "눈을 잘 마주치지 않고 애매한 말로 넘기면 상대가 걱정할 수 있어요.";
         }
 
         ShowStep3();
     }
 
-    // --- STEP 3: 음료 수령 & 감사 인사 ---
+    // --- STEP 3: 마무리 ---
 
     private void ShowStep3()
     {
         step = 3;
-        npcLineText.text = "카페 알바:" + step1Answer + step2Answer + "나왔습니다! 맛있게 드세요~";
+        npcLineText.text = "박주임: 그래도 점심 같이 얘기하니까 좋네요. 오후에도 파이팅해요!";
 
-        SetOption(0, "감사합니다.", true);
-        SetOption(1, "", false);
+        SetOption(0, "네, 감사합니다. 대리님도 파이팅하세요!", true);
+        SetOption(1, "어… 네.", true);
         SetOption(2, "", false);
 
-        feedbackText.text = "감사 인사로 마무리해 보세요.";
-        switch(cases)
-        {
-            case 0:
-                //아이스 아메리카노, 따뜻한 라떼 포장
-                PlayNpcLineAudio(3);
-                break;
-            case 1:
-                //따뜻한 아메리카노, 아이스 라떼 포장
-                PlayNpcLineAudio(4);
-                break;
-            case 2:
-                //아메리카노 포장
-                PlayNpcLineAudio(5);
-                break;
-            case 3:
-                //아이스 아메리카노, 따뜻한 라떼 매장
-                PlayNpcLineAudio(6);
-                break;
-            case 4:
-                //따뜻한 아메리카노, 아이스 라떼 매장
-                PlayNpcLineAudio(7);
-                break;
-            case 5:
-                //아메리카노 매장
-                PlayNpcLineAudio(8);
-                break;
-            default:
-                Debug.Log("예외 에러");
-                break;
+        feedbackText.text = "간단한 응원과 감사 인사로 마무리해 봅니다.";
+        //tipsText.text = "마무리 인사는 길지 않아도 괜찮아요.";
 
-        }
+        PlayNpcLineAudio(3);
     }
 
     private void HandleStep3(int index)
@@ -228,17 +195,21 @@ public class TrackAController : MonoBehaviour
         if (index == 0)
         {
             report.goodChoices++;
-            feedbackText.text = "감사 인사를 하면 상대에게 좋은 인상을 남길 수 있습니다.";
+            feedbackText.text = "상대도 기분 좋게 대화를 마무리할 수 있습니다.";
+        }
+        else
+        {
+            report.neutralChoices++;
+            feedbackText.text = "대화는 끝나지만, 조금 아쉬운 느낌일 수 있어요.";
         }
 
-        // 리포트 씬으로 이동
         if (!string.IsNullOrEmpty(resultSceneName))
         {
             SceneManager.LoadScene(resultSceneName);
         }
         else
         {
-            Debug.LogError("[TrackAController] resultSceneName 이 설정되지 않았습니다.");
+            Debug.LogError("[TrackBController] resultSceneName 이 설정되지 않았습니다.");
         }
     }
 
@@ -252,7 +223,7 @@ public class TrackAController : MonoBehaviour
         if (active)
         {
             optionTexts[index].text = text;
-        }        
+        }
     }
 
     private void PlayNpcLineAudio(int clipIndex)
@@ -278,5 +249,4 @@ public class TrackAController : MonoBehaviour
             PlayNpcLineAudio(clipIndex);
         }
     }
-
 }
