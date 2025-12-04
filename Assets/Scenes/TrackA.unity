@@ -12399,7 +12399,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 56ec89d4acdb3ec46a4edd8029c61bc7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.761
+      value: -1.7635789
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ec89d4acdb3ec46a4edd8029c61bc7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -12407,11 +12407,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ec89d4acdb3ec46a4edd8029c61bc7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.544
+      value: 2.5448442
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ec89d4acdb3ec46a4edd8029c61bc7, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.90264326
+      value: 0.938683
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ec89d4acdb3ec46a4edd8029c61bc7, type: 3}
       propertyPath: m_LocalRotation.x
@@ -12419,7 +12419,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ec89d4acdb3ec46a4edd8029c61bc7, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.4303896
+      value: -0.34478164
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ec89d4acdb3ec46a4edd8029c61bc7, type: 3}
       propertyPath: m_LocalRotation.z
@@ -12431,7 +12431,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ec89d4acdb3ec46a4edd8029c61bc7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -50.985
+      value: -40.337
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 56ec89d4acdb3ec46a4edd8029c61bc7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -34321,6 +34321,17 @@ MonoBehaviour:
   - {fileID: 706828065}
   - {fileID: 1222299183}
   resultSceneName: ResultScene
+  npcAudioSource: {fileID: 1434835679}
+  npcLineClips:
+  - {fileID: 8300000, guid: 8bf2f2bc8d7e680478f0bb21187bcf06, type: 3}
+  - {fileID: 8300000, guid: e6d766d09c35d2749856e7dcff483dae, type: 3}
+  - {fileID: 8300000, guid: 54c4c9a6e4c5e94419e3de3293bf8ccf, type: 3}
+  - {fileID: 8300000, guid: f892a5f4e6c8d834eb21e5bca94280d8, type: 3}
+  - {fileID: 8300000, guid: 2954fddb2237e3f4b8ad43235db880c9, type: 3}
+  - {fileID: 8300000, guid: b4a67bbfda39847409c969fd6dd37f25, type: 3}
+  - {fileID: 8300000, guid: 243c21552793ca847b1cb9102b150a34, type: 3}
+  - {fileID: 8300000, guid: 9c5acc4499b362d429ddf1d6d55810a6, type: 3}
+  - {fileID: 8300000, guid: c928c9b6fe18fc14da6a99e26d3d2074, type: 3}
 --- !u!4 &1973941778
 Transform:
   m_ObjectHideFlags: 0

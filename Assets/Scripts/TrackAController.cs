@@ -14,8 +14,17 @@ public class TrackAController : MonoBehaviour
     [Header("Result Scene")]
     [SerializeField] private string resultSceneName = "ResultScene";
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource npcAudioSource;
+    [Tooltip("각 스텝별 NPC 대사 음성 (0: 인사, 1: 주문, 2: 포장/매장 질문, 3: 음료 나왔습니다)")]
+    [SerializeField] private AudioClip[] npcLineClips;
+
     private SessionReport report;
-    private int step = 0;   // 0~3
+    private int step = 0;
+
+    private int cases = 0;
+    private string step1Answer;
+    private string step2Answer;
 
     private void Start()
     {
@@ -57,13 +66,15 @@ public class TrackAController : MonoBehaviour
     private void ShowStep0()
     {
         step = 0;
-        npcLineText.text = "카페 알바: 안녕하세요! 주문 어떻게 도와드릴까요?";
+        npcLineText.text = "카페 알바: 어서오세요~ \n 목표: 아이스 아메리카노 1잔, 따뜻한 라떼 한잔 포장하기";
 
         SetOption(0, "안녕하세요!", true);
         SetOption(1, "...", true);
         SetOption(2, "아, 네.", true);
 
         feedbackText.text = "먼저 간단히 인사해 보세요.";
+
+        PlayNpcLineAudio(0);
     }
 
     private void HandleStep0(int index)
@@ -92,11 +103,13 @@ public class TrackAController : MonoBehaviour
     private void ShowStep1()
     {
         step = 1;
-        npcLineText.text = "카페 알바: 오늘은 어떤 음료 준비해 드릴까요?";
+        npcLineText.text = "안녕하세요! 주문 어떻게 도와드릴까요?";
 
         SetOption(0, "아이스 아메리카노 한 잔, 따뜻한 라떼 한 잔 포장해주세요.", true);
         SetOption(1, "따뜻한 아메리카노 한 잔, 아이스 라떼 한 잔 포장해주세요.", true);
         SetOption(2, "그.. 아.. 그냥 커피요.", true);
+
+        PlayNpcLineAudio(1);
     }
 
     private void HandleStep1(int index)
@@ -130,6 +143,8 @@ public class TrackAController : MonoBehaviour
         SetOption(0, "포장해서 갈게요.", true);
         SetOption(1, "매장에서 먹고 갈게요.", true);
         SetOption(2, "", false); // 필요 없으면 숨기기
+
+        PlayNpcLineAudio(2);
     }
 
     private void HandleStep2(int index)
@@ -153,13 +168,41 @@ public class TrackAController : MonoBehaviour
     private void ShowStep3()
     {
         step = 3;
-        npcLineText.text = "카페 알바: 아이스 아메리카노, 따뜻한 라떼 포장 나왔습니다! 맛있게 드세요~";
+        npcLineText.text = "카페 알바:" + step1Answer + step2Answer + "나왔습니다! 맛있게 드세요~";
 
         SetOption(0, "감사합니다.", true);
         SetOption(1, "", false);
         SetOption(2, "", false);
 
         feedbackText.text = "감사 인사로 마무리해 보세요.";
+        switch(cases)
+        {
+            case 0:
+                //아이스 아메리카노, 따뜻한 라떼 포장
+                PlayNpcLineAudio(3);
+                break;
+            case 1:
+                //따뜻한 아메리카노, 아이스 라떼 포장
+                PlayNpcLineAudio(4);
+                break;
+            case 2:
+                //아메리카노 포장
+                PlayNpcLineAudio(5);
+                break;
+            case 3:
+                //아이스 아메리카노, 따뜻한 라떼 매장
+                PlayNpcLineAudio(6);
+                break;
+            case 4:
+                //따뜻한 아메리카노, 아이스 라떼 매장
+                PlayNpcLineAudio(7);
+                break;
+            case 5:
+                //아메리카노 매장
+                PlayNpcLineAudio(8);
+                break;
+
+        }
     }
 
     private void HandleStep3(int index)
@@ -192,5 +235,52 @@ public class TrackAController : MonoBehaviour
         {
             optionTexts[index].text = text;
         }
+
+        if(step == 1)
+        {
+            if(index == 0)
+            {
+                step1Answer = "아이스 아메리카노, 따뜻한 라떼";
+            }
+            else if(index == 1)
+            {
+                step1Answer = "따뜻한 아메리카노, 아이스 라떼";
+                cases++;
+            }
+            else if(index == 2)
+            {
+                step1Answer = "아메리카노";
+                cases += 2;
+            }
+        }
+        else if(step == 2)
+        {
+            if (index == 0)
+            {
+                step2Answer = "포장";
+            }
+            else if (index == 1)
+            {
+                step2Answer = "";
+                cases += 3;
+            }
+            else if (index == 2)
+            {
+                
+            }
+        }
     }
+
+    private void PlayNpcLineAudio(int clipIndex)
+    {
+        if (npcAudioSource == null) return;
+        if (npcLineClips == null) return;
+        if (clipIndex < 0 || clipIndex >= npcLineClips.Length) return;
+        if (npcLineClips[clipIndex] == null) return;
+
+        npcAudioSource.Stop();
+        npcAudioSource.clip = npcLineClips[clipIndex];
+        npcAudioSource.Play();
+    }
+
 }
