@@ -1,25 +1,31 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 
 public class TitleUIController : MonoBehaviour
 {
-    [Header("Next Scene Settings")]
-    [SerializeField]
-    private string loginSceneName = "Room_Login";
-
     [Header("FlowManager (Optional)")]
-    [Tooltip("처음 실행 시 FlowManager 프리팹을 한 번만 생성하고 싶다면 여기에 넣어주세요.")]
     [SerializeField]
     private FlowManager flowManagerPrefab;
+
+    [Header("Input Delay")]
+    [Tooltip("씬이 로드된 후 이 시간(초) 동안은 XR 입력을 무시합니다.")]
+    [SerializeField]
+    private float inputDelaySeconds = 0.5f;
+
+    [Header("Title Flow Controller")]
+    [SerializeField]
+    private TitleFlowController titleFlowController;
 
     // XR 컨트롤러 장치 목록
     private readonly List<InputDevice> leftHandDevices = new List<InputDevice>();
     private readonly List<InputDevice> rightHandDevices = new List<InputDevice>();
 
-    // 한 번 시작/종료가 결정되면 중복 실행 방지 플래그
-    private bool hasDecided = false;
+    private float elapsedSinceLoad = 0f;
+
+    // 바로 전 프레임에 버튼이 눌려 있었는지 여부 (엣지 검출용)
+    private bool lastRightPressed = false;
+    private bool lastLeftPressed = false;
 
     private void Awake()
     {
@@ -32,6 +38,8 @@ public class TitleUIController : MonoBehaviour
 
     private void OnEnable()
     {
+        elapsedSinceLoad = 0f;
+
         RefreshDevices();
         InputDevices.deviceConnected += OnDeviceConnected;
         InputDevices.deviceDisconnected += OnDeviceDisconnected;
@@ -87,34 +95,42 @@ public class TitleUIController : MonoBehaviour
         rightHandDevices.Remove(device);
     }
 
-    // --- 매 프레임 버튼 감지 ---
-
     private void Update()
     {
-        if (hasDecided) return;
+        if (titleFlowController == null) return;
 
-        // 오른손 컨트롤러 버튼 → 시작
-        if (CheckAnyButtonPressed(rightHandDevices))
-        {
-            hasDecided = true;
-            OnClickStart();
+        elapsedSinceLoad += Time.unscaledDeltaTime;
+        if (elapsedSinceLoad < inputDelaySeconds)
             return;
+
+        // 현재 프레임에서 버튼이 눌려 있는지
+        bool rightNow = IsAnyButtonPressed(rightHandDevices);
+        bool leftNow = IsAnyButtonPressed(leftHandDevices);
+
+        // "false → true"로 바뀐 순간만 처리 (Button Down)
+        if (rightNow && !lastRightPressed)
+        {
+            // 오른손: 현재 Stage의 "진행" 액션
+            titleFlowController.OnRightAction();
         }
 
-        // 왼손 컨트롤러 버튼 → 종료
-        if (CheckAnyButtonPressed(leftHandDevices))
+        if (leftNow && !lastLeftPressed)
         {
-            hasDecided = true;
-            OnClickQuit();
-            return;
+            // 왼손: 현재 Stage의 "뒤로/종료" 액션
+            titleFlowController.OnLeftAction();
         }
+
+        // 다음 프레임 비교를 위해 상태 저장
+        lastRightPressed = rightNow;
+        lastLeftPressed = leftNow;
     }
 
     /// <summary>
-    /// 주어진 컨트롤러 리스트에서 primary/secondary/trigger/grip 중
-    /// 아무 버튼이나 눌렸는지 확인
+    /// 주어진 컨트롤러 리스트에서
+    /// primary / secondary / trigger / grip 중 아무 버튼이나 눌려 있는지
+    /// (현재 프레임 기준)
     /// </summary>
-    private bool CheckAnyButtonPressed(List<InputDevice> devices)
+    private bool IsAnyButtonPressed(List<InputDevice> devices)
     {
         foreach (var device in devices)
         {
@@ -129,28 +145,5 @@ public class TitleUIController : MonoBehaviour
             }
         }
         return false;
-    }
-
-    // --- 기존 버튼용 함수 (VR에서도 그대로 재사용) ---
-
-    public void OnClickStart()
-    {
-        if (string.IsNullOrEmpty(loginSceneName))
-        {
-            Debug.LogError("[TitleUIController] loginSceneName 이 설정되지 않았습니다.");
-            return;
-        }
-
-        SceneManager.LoadScene(loginSceneName);
-    }
-
-    public void OnClickQuit()
-    {
-#if UNITY_EDITOR
-        Debug.Log("[TitleUIController] Quit 눌림 (에디터에서는 종료 대신 로그만 출력)");
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
     }
 }

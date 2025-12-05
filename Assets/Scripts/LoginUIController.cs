@@ -3,92 +3,197 @@ using UnityEngine.SceneManagement;
 
 public class LoginUIController : MonoBehaviour
 {
+    [Header("Panels")]
+    [SerializeField] private GameObject panelTrackChoice;      // A/B/Guest 처음 선택 패널
+    [SerializeField] private GameObject panelInfoTrackA;       // A 안내 패널
+    [SerializeField] private GameObject panelInfoTrackB;       // B 안내 패널
+    [SerializeField] private GameObject panelInfoGuest;        // Guest 안내 패널
+    [SerializeField] private GameObject panelGuestTrackChoice; // Guest용 A/B 선택 패널
+    [SerializeField] private GameObject panelTutorialChoice;   // 튜토리얼 여부 패널
+
     [Header("Next Scenes")]
     [SerializeField] private string tutorialSceneName = "Room_Tutorial";
-    [SerializeField] private string checkSceneName = "Room_Check";
+    [SerializeField] private string checkSceneName = "Room_Check";   // 거울 씬
 
-    [Header("Panels")]
-    [SerializeField] private GameObject loginPanel;
-    [SerializeField] private GameObject tutorialChoicePanel;    // 튜토리얼 진행 여부 묻는 패널
-    [SerializeField] private GameObject guestTrackChoicePanel;  // 게스트용 A/B 선택 패널
+    private TrackType selectedTrack = TrackType.A;
+    private bool isGuestMode = false;
 
     private void Start()
     {
-        if (tutorialChoicePanel != null)
-            tutorialChoicePanel.SetActive(false);
-        if (guestTrackChoicePanel != null)
-            guestTrackChoicePanel.SetActive(false);
+        ShowPanelTrackChoice();
     }
 
-    // --- 로그인 버튼들 ---
+    // ---------- Panel 전환 유틸 ----------
 
-    public void OnClickUser1()
+    private void ShowPanelTrackChoice()
     {
-        var app = FlowManager.Instance;
-        app.currentUserId = "User1";
-        app.isGuest = false;
-        app.currentTrack = TrackType.A;   // 외부 설문 결과가 A라고 가정
-        loginPanel.SetActive(false);
-        ShowTutorialChoice();
+        SetAllPanelsInactive();
+        if (panelTrackChoice != null) panelTrackChoice.SetActive(true);
     }
 
-    public void OnClickUser2()
+    private void ShowPanelInfoTrackA()
     {
-        var app = FlowManager.Instance;
-        app.currentUserId = "User2";
-        app.isGuest = false;
-        app.currentTrack = TrackType.B;   // 외부 설문 결과가 B라고 가정
-        loginPanel.SetActive(false);
-        ShowTutorialChoice();
+        SetAllPanelsInactive();
+        if (panelInfoTrackA != null) panelInfoTrackA.SetActive(true);
+    }
+
+    private void ShowPanelInfoTrackB()
+    {
+        SetAllPanelsInactive();
+        if (panelInfoTrackB != null) panelInfoTrackB.SetActive(true);
+    }
+
+    private void ShowPanelInfoGuest()
+    {
+        SetAllPanelsInactive();
+        if (panelInfoGuest != null) panelInfoGuest.SetActive(true);
+    }
+
+    private void ShowPanelGuestTrackChoice()
+    {
+        SetAllPanelsInactive();
+        if (panelGuestTrackChoice != null) panelGuestTrackChoice.SetActive(true);
+    }
+
+    private void ShowPanelTutorialChoice()
+    {
+        SetAllPanelsInactive();
+        if (panelTutorialChoice != null) panelTutorialChoice.SetActive(true);
+    }
+
+    private void SetAllPanelsInactive()
+    {
+        if (panelTrackChoice != null) panelTrackChoice.SetActive(false);
+        if (panelInfoTrackA != null) panelInfoTrackA.SetActive(false);
+        if (panelInfoTrackB != null) panelInfoTrackB.SetActive(false);
+        if (panelInfoGuest != null) panelInfoGuest.SetActive(false);
+        if (panelGuestTrackChoice != null) panelGuestTrackChoice.SetActive(false);
+        if (panelTutorialChoice != null) panelTutorialChoice.SetActive(false);
+    }
+
+    // ---------- 1단계: A / B / Guest 선택 ----------
+
+    public void OnClickTrackA()
+    {
+        selectedTrack = TrackType.A;
+        isGuestMode = false;
+
+        var flow = FlowManager.Instance;
+        if (flow != null)
+        {
+            flow.currentTrack = TrackType.A;
+            flow.isGuest = false;
+        }
+
+        // 바로 튜토리얼로 가지 않고, A 트랙 안내 패널 먼저
+        ShowPanelInfoTrackA();
+    }
+
+    public void OnClickTrackB()
+    {
+        selectedTrack = TrackType.B;
+        isGuestMode = false;
+
+        var flow = FlowManager.Instance;
+        if (flow != null)
+        {
+            flow.currentTrack = TrackType.B;
+            flow.isGuest = false;
+        }
+
+        // B 트랙 안내 패널 먼저
+        ShowPanelInfoTrackB();
     }
 
     public void OnClickGuest()
     {
-        var app = FlowManager.Instance;
-        app.currentUserId = "Guest";
-        app.isGuest = true;
+        isGuestMode = true;
 
-        loginPanel.SetActive(false);
+        var flow = FlowManager.Instance;
+        if (flow != null)
+        {
+            flow.isGuest = true;
+            // Guest 모드에서는 아직 트랙을 확정하지 않음 (나중에 선택)
+        }
 
-        // 게스트는 먼저 A/B 중에서 체험할 트랙을 고르게
-        if (guestTrackChoicePanel != null)
-            guestTrackChoicePanel.SetActive(true);
+        // Guest 모드 안내 패널 먼저
+        ShowPanelInfoGuest();
     }
 
-    // --- 게스트용 트랙 선택 ---
+    // ---------- 2단계: 안내 패널에서 "다음" 버튼 ----------
 
-    public void OnClickGuestTrackA()
+    // A 안내 패널의 "다음" 버튼
+    public void OnClickInfoTrackANext()
     {
-        var app = FlowManager.Instance;
-        app.currentTrack = TrackType.A;
-        guestTrackChoicePanel.SetActive(false);
-        ShowTutorialChoice();
+        // A 트랙은 바로 튜토리얼 여부로 이동
+        ShowPanelTutorialChoice();
     }
 
-    public void OnClickGuestTrackB()
+    // B 안내 패널의 "다음" 버튼
+    public void OnClickInfoTrackBNext()
     {
-        var app = FlowManager.Instance;
-        app.currentTrack = TrackType.B;
-        guestTrackChoicePanel.SetActive(false);
-        ShowTutorialChoice();
+        // B 트랙도 바로 튜토리얼 여부로 이동
+        ShowPanelTutorialChoice();
     }
 
-    // --- 튜토리얼 진행 여부 ---
-
-    private void ShowTutorialChoice()
+    // Guest 안내 패널의 "다음" 버튼
+    public void OnClickInfoGuestNext()
     {
-        if (tutorialChoicePanel != null)
-            tutorialChoicePanel.SetActive(true);
+        // Guest인 경우에는 이제 A/B 중 어떤 상황을 체험할지 선택
+        ShowPanelGuestTrackChoice();
     }
+
+    // ---------- 3단계: Guest 모드에서 A/B 선택 ----------
+
+    public void OnClickGuestChooseTrackA()
+    {
+        selectedTrack = TrackType.A;
+
+        var flow = FlowManager.Instance;
+        if (flow != null)
+        {
+            flow.currentTrack = TrackType.A;
+            // isGuest는 이미 true로 세팅되어 있음
+        }
+
+        ShowPanelTutorialChoice();
+    }
+
+    public void OnClickGuestChooseTrackB()
+    {
+        selectedTrack = TrackType.B;
+
+        var flow = FlowManager.Instance;
+        if (flow != null)
+        {
+            flow.currentTrack = TrackType.B;
+        }
+
+        ShowPanelTutorialChoice();
+    }
+
+    // ---------- 4단계: 튜토리얼 여부 ----------
 
     public void OnClickDoTutorial()
     {
+        var flow = FlowManager.Instance;
+        if (flow != null)
+        {
+            flow.tutorialDone = false; // 아직 안 했고, 이제 하러 감
+        }
+
         SceneManager.LoadScene(tutorialSceneName);
     }
 
     public void OnClickSkipTutorial()
     {
-        FlowManager.Instance.tutorialDone = true;
+        var flow = FlowManager.Instance;
+        if (flow != null)
+        {
+            flow.tutorialDone = true;
+        }
+
+        // 튜토리얼을 건너뛰고 바로 거울(페이셜/보이스 체크) 씬으로
         SceneManager.LoadScene(checkSceneName);
     }
 }

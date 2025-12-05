@@ -12,7 +12,7 @@ public class TrackAController : MonoBehaviour
     [SerializeField] private TMP_Text[] optionTexts;
 
     [Header("Result Scene")]
-    [SerializeField] private string resultSceneName = "ResultScene";
+    [SerializeField] private string resultSceneName = "Room_Result";
 
     [Header("Audio")]
     [SerializeField] private AudioSource npcAudioSource;

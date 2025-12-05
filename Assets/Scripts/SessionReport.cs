@@ -1,5 +1,7 @@
 using UnityEngine;
-public class SessionReport : MonoBehaviour
+
+[System.Serializable]
+public class SessionReport
 {
     public string userId;
     public string track;     // "A" or "B"
@@ -10,3 +12,4 @@ public class SessionReport : MonoBehaviour
     public int badChoices;
     public bool askedForHelp;
 }
+

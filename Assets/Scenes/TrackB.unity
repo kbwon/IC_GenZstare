@@ -31888,7 +31888,7 @@ MonoBehaviour:
   - {fileID: 139016948}
   - {fileID: 1378324823}
   - {fileID: 2023730616}
-  resultSceneName: ResultScene
+  resultSceneName: Room_Result
   npcAudioSource: {fileID: 488290746}
   npcLineClips:
   - {fileID: 8300000, guid: 993a71b364b66cf4f9298b171dcddd45, type: 3}
@@ -54523,18 +54523,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1728768965}
-  m_LocalRotation: {x: -0, y: 0.4081688, z: -0, w: 0.91290647}
-  m_LocalPosition: {x: 0, y: 0, z: 10.35}
+  m_LocalRotation: {x: -0, y: 0.9882513, z: -0, w: 0.15283746}
+  m_LocalPosition: {x: 0, y: 0, z: 8.589}
   m_LocalScale: {x: 0.0005, y: 0.0013, z: 0.001}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 747487454}
   - {fileID: 1586928891}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 48.18, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 162.417, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 5.815, y: 1.037}
+  m_AnchoredPosition: {x: 6.083, y: 1.037}
   m_SizeDelta: {x: 1192, y: 717}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1733349850
